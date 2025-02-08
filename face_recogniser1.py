@@ -3,7 +3,7 @@ import pickle##
 import serial
 
 # Setting serial port to COM4 at bard rate of 9600
-port = serial.Serial('COM4',9600)
+port = serial.Serial('/dev/cu.usbmodem101',9600)
 
 video = cv2.VideoCapture(0)
 cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
@@ -40,13 +40,15 @@ while True:
             # Checking the ID
             # Replace the "ID == 2" with your ID so that LED chaser can start
             # working
-            if(ID == 2):
-                port.write(str.encode('1'))
+            if(ID == 0):
+                command = "ON"
+                port.write(command.encode('utf-8'))
                 print("sent 1")
 
             # These are the ID other than your face.
-            elif(ID == 0 or ID == 1):
-                port.write(str.encode('0'))
+            else:
+                command = "OFF"
+                port.write(command.encode('utf-8'))
         frame = cv2.rectangle(frame, (x,y), (x+w,y+h),(0,255,255),4)
 
     cv2.imshow("Video",frame)
