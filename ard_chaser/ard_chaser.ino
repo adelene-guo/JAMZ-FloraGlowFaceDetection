@@ -13,12 +13,17 @@
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 100
 int servoPin = 13; 
+Servo Servo1;
+
+int flag;
+String data;
 
 void setup()
 {
-  #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
+  Serial.begin(9600);
+#if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
   clock_prescale_set(clock_div_1);
-  #endif
+#endif
 
   pixels.begin();
   Servo1.attach(servoPin);
@@ -26,37 +31,34 @@ void setup()
 
 void loop()
 {
-  while( Serial.available())
+  while( Serial.available() > 0)
   {
-    data = Serial.read();
+    data = Serial.readString();
+    Serial.println(data);
 
-    if (data == '1')
+    if (data == "ON")
     {
       flag = 1;
     }
-    else if(data == '0')
+    else if(data == "OFF")
     {
       flag = 0;
     }
   }
   if(flag == 1)
     {
-      pixels.clear();
-
       for(int i=0; i<NUMPIXELS; i++) {
 
-      pixels.setPixelColor(i, pixels.Color(255, 50, 0));
-      pixels.show();
-      delay(DELAYVAL);
-      // Make servo go to 180 degrees 
-      Servo1.write(180); 
-      delay(1000); 
-        }
+        pixels.setPixelColor(i, pixels.Color(255, 50, 0));
+        pixels.show();
+        delay(DELAYVAL);
+      }
+      // Make servo go to 0 degrees 
+      Servo1.write(0);
+    }
      else if (flag == 0)
     {
-            // Make servo go to 90 degrees 
-      Servo1.write(0); 
-      delay(1000); 
+      pixels.clear();
+      delay(500); 
     }
-    }x
 }
